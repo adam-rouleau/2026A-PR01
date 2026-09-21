@@ -34,7 +34,7 @@ def generate_initial_platforms():
         "green"
     )
     PLATFORMS.append(start_platform)
-
+    
     current_y = DOODLE_START_Y + 70 - random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
 
     # ======================== PARTIE 2.2 ========================
@@ -45,6 +45,21 @@ def generate_initial_platforms():
     # horizontale valide, choisir un type avec choose_platform_type(...),
     # ajouter la plateforme à PLATFORMS et calculer la hauteur de la suivante.
     # Les probabilités à utiliser sont données dans le README.
+    while current_y>0:
+        cordonnee_x = random.randint(0, SCREEN_WIDTH-PLATFORM_WIDTH)
+
+        espace_platform = random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+        current_y -= espace_platform
+
+        platform_type = choose_platform_type(0.65, 0.17, 0.10)
+
+        other_platform = create_platform(
+            cordonnee_x, current_y, platform_type
+        )
+
+        PLATFORMS.append(other_platform)
+
+
 
     return
     # ===========================================================
