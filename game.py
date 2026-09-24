@@ -104,14 +104,9 @@ def check_platform_collisions():
     vel_y = doodle_dict["vel_y"]
     doodle_x = doodle_dict["x"]
     doodle_y = doodle_dict["y"]
-    # doodle_hitbox = {
-    #     "gauche_x" : doodle_x,
-    #     "droite_x" : (doodle_x + DOODLE_WIDTH),
-    #     "haut_y" : doodle_y, 
-    #     "bas_y" : (doodle_y + DOODLE_HEIGHT),
-    # }
-    rect_doodle = (doodle_x, doodle_y, DOODLE_WIDTH, DOODLE_HEIGHT)
 
+    rect_doodle = (doodle_x, doodle_y, DOODLE_WIDTH, DOODLE_HEIGHT)
+    rect_doodle_before = rect_doodle # S'assurer que le premier coup ai une valeur
     #Si descente
     if vel_y > 0:
         for platform in range(len(PLATFORMS)):
@@ -124,9 +119,7 @@ def check_platform_collisions():
             platform_x = PLATFORMS[platform]["x"]
             platform_y = PLATFORMS[platform]["y"]
             rect_platform = (platform_x, platform_y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
-            # if doodle_hitbox["haut_y"] < platform_hitbox["bas_y"] and doodle_hitbox["bas_y"] < platform_hitbox["haut_y"]:
             if rects_collide(rect_doodle, rect_platform):
-                rect_doodle_before = (doodle_x, (doodle_y + vel_y), PLATFORM_WIDTH, PLATFORM_HEIGHT)
                 if rects_collide(rect_doodle_before, rect_platform):
                     if PLATFORMS[platform]["type"] == "green" or PLATFORMS[platform]["type"] == "blue":
                         doodle_dict["vel_y"] = JUMP_VELOCITY
@@ -135,6 +128,8 @@ def check_platform_collisions():
                     elif PLATFORMS[platform]["type"] == "brown":
                         doodle_dict["vel_y"] = JUMP_VELOCITY
                         PLATFORMS[platform]["active"] == False
+                rect_doodle_before = (doodle_x, (doodle_y + vel_y), PLATFORM_WIDTH, PLATFORM_HEIGHT)
+
 
     return
 
