@@ -163,9 +163,11 @@ def scroll_camera():
     # meilleur score doit être mis à jour. Les plateformes sorties sous
     # l'écran doivent être retirées, puis de nouvelles plateformes générées.
     doodle_y = doodle_dict["y"]
-    if doodle_y >= CAMERA_SCROLL_THRESHOLD:
+    if doodle_y <= CAMERA_SCROLL_THRESHOLD:
+        print("Over", doodle_y)
         doodle_dict["y"] = CAMERA_SCROLL_THRESHOLD
         vitesse_deplacement_y = doodle_dict["vel_y"]
+        print(vitesse_deplacement_y)
         for platform in range(len(PLATFORMS)):
             PLATFORMS[platform]["y"] -= vitesse_deplacement_y
         doodle_dict["score"] += vitesse_deplacement_y
@@ -195,8 +197,8 @@ def generate_new_platforms():
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
     plateforme_plus_haute = PLATFORMS[-1]
     while (plateforme_plus_haute["y"] - MAX_PLATFORM_GAP) > 0:
-        position_x = random.random(0, (SCREEN_WIDTH-PLATFORM_WIDTH))
-        position_y = plateforme_plus_haute - (random.random(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP))
+        position_x = random.randint(0, (SCREEN_WIDTH-PLATFORM_WIDTH))
+        position_y = plateforme_plus_haute["y"] - (random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP))
         platform_type = choose_platform_type(0.55, 0.20, 13.0)
         create_platform(position_x, position_y, platform_type)
 
