@@ -194,12 +194,20 @@ def generate_new_platforms():
     # Vous devrez partir de la plateforme actuellement la plus haute et
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
-    plateforme_plus_haute = PLATFORMS[-1]
-    if plateforme_plus_haute["y"] - MAX_PLATFORM_GAP > 0:
-        position_x = random.randint(0, (SCREEN_WIDTH-PLATFORM_WIDTH))
-        position_y = plateforme_plus_haute["y"] - (random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP))
-        platform_type = choose_platform_type(0.55, 0.20, 13.0)
-        create_platform(position_x, position_y, platform_type)
+    current_y = PLATFORMS[-1]["y"] + 70 - random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+    while current_y >= 0:
+        cordonnee_x = random.randint(0, SCREEN_WIDTH-PLATFORM_WIDTH)
+
+        espace_platform = random.randint(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP)
+        current_y -= espace_platform
+
+        platform_type = choose_platform_type(0.65, 0.17, 0.10)
+
+        other_platform = create_platform(
+            cordonnee_x, current_y, platform_type
+        )
+
+        PLATFORMS.append(other_platform)
 
 
     return
