@@ -166,12 +166,12 @@ def scroll_camera():
     if doodle_y >= CAMERA_SCROLL_THRESHOLD:
         doodle_dict["y"] = CAMERA_SCROLL_THRESHOLD
         vitesse_deplacement_y = doodle_dict["vel_y"]
-        for platform in PLATFORMS:
+        for platform in range(len(PLATFORMS)):
             PLATFORMS[platform]["y"] -= vitesse_deplacement_y
         doodle_dict["score"] += vitesse_deplacement_y
         if doodle_dict["score"] > doodle_dict["high_score"]:
             doodle_dict["high_score"] = doodle_dict["score"]
-        for platform in PLATFORMS:
+        for platform in range(len(PLATFORMS)):
             if PLATFORMS[platform]["y"] >= SCREEN_HEIGHT:
                 PLATFORMS[platform]["active"]
                 generate_new_platforms()
