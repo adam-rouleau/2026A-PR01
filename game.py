@@ -4,7 +4,7 @@ import pygame
 import random
 from config import (
     SCREEN_WIDTH, SCREEN_HEIGHT, GRAVITY, JUMP_VELOCITY, SPRING_JUMP_VELOCITY,
-    DOODLE_SPEED, DOODLE_WIDTH, DOODLE_HEIGHT, PLATFORM_WIDTH,
+    DOODLE_SPEED, DOODLE_WIDTH, DOODLE_HEIGHT, PLATFORM_WIDTH, PLATFORM_HEIGHT,
     MIN_PLATFORM_GAP, MAX_PLATFORM_GAP, CAMERA_SCROLL_THRESHOLD,
     PLATFORMS, doodle_dict, DOODLE_START_X, DOODLE_START_Y, LIVES
 )
@@ -21,6 +21,8 @@ def apply_gravity():
     """
     # TODO : Mettez à jour la vitesse verticale puis la position verticale
     # du Doodle à partir de GRAVITY.
+    doodle_dict["vel_y"] += GRAVITY
+    doodle_dict["y"] += doodle_dict["vel_y"]
 
     return
 
@@ -112,6 +114,35 @@ def check_platform_collisions():
     # - spring : SPRING_JUMP_VELOCITY ;
     # - brown : JUMP_VELOCITY puis désactivation de la plateforme ;
     # - green/blue : JUMP_VELOCITY.
+    vel_y = doodle_dict["vel_y"]
+    doodle_x = doodle_dict["x"]
+    doodle_y = doodle_dict["y"]
+
+    rect_doodle = (doodle_x, doodle_y, DOODLE_WIDTH, DOODLE_HEIGHT)
+    rect_doodle_before = rect_doodle # S'assurer que le premier coup ai une valeur
+    #Si descente
+    if vel_y > 0:
+        for platform in range(len(PLATFORMS)):
+            # platform_hitbox = {
+            #     "gauche_x" : PLATFORMS[plateform]["x"], 
+            #     "droite_x" : (PLATFORMS[plateform]["x"] + PLATFORM_WIDTH), 
+            #     "haut_y" : PLATFORMS[plateform]["y"], 
+            #     "bas_y" : (PLATFORMS["y"] + PLATFORM_HEIGHT),
+            # }
+            platform_x = PLATFORMS[platform]["x"]
+            platform_y = PLATFORMS[platform]["y"]
+            rect_platform = (platform_x, platform_y, PLATFORM_WIDTH, PLATFORM_HEIGHT)
+            if rects_collide(rect_doodle, rect_platform):
+                if rects_collide(rect_doodle_before, rect_platform):
+                    if PLATFORMS[platform]["type"] == "green" or PLATFORMS[platform]["type"] == "blue":
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
+                    elif PLATFORMS[platform]["type"] == "spring":
+                        doodle_dict["vel_y"] = SPRING_JUMP_VELOCITY
+                    elif PLATFORMS[platform]["type"] == "brown":
+                        doodle_dict["vel_y"] = JUMP_VELOCITY
+                        PLATFORMS[platform]["active"] == False
+                rect_doodle_before = (doodle_x, (doodle_y + vel_y), PLATFORM_WIDTH, PLATFORM_HEIGHT)
+
 
     return
 
@@ -131,6 +162,19 @@ def scroll_camera():
     # Le score doit représenter la distance verticale ainsi parcourue et le
     # meilleur score doit être mis à jour. Les plateformes sorties sous
     # l'écran doivent être retirées, puis de nouvelles plateformes générées.
+    doodle_y = doodle_dict["y"]
+    if doodle_y >= CAMERA_SCROLL_THRESHOLD:
+        doodle_dict["y"] = CAMERA_SCROLL_THRESHOLD
+        vitesse_deplacement_y = doodle_dict["vel_y"]
+        for platform in PLATFORMS:
+            PLATFORMS[platform]["y"] -= vitesse_deplacement_y
+        doodle_dict["score"] += vitesse_deplacement_y
+        if doodle_dict["score"] > doodle_dict["high_score"]:
+            doodle_dict["high_score"] = doodle_dict["score"]
+        for platform in PLATFORMS:
+            if PLATFORMS[platform]["y"] >= SCREEN_HEIGHT:
+                PLATFORMS[platform]["active"]
+                generate_new_platforms()
 
     return
 
@@ -149,6 +193,13 @@ def generate_new_platforms():
     # Vous devrez partir de la plateforme actuellement la plus haute et
     # continuer à ajouter des plateformes tant que nécessaire. Utilisez
     # choose_platform_type(...) avec les probabilités indiquées dans le README.
+    plateforme_plus_haute = PLATFORMS[-1]
+    while (plateforme_plus_haute["y"] - MAX_PLATFORM_GAP) > 0:
+        position_x = random.random(0, (SCREEN_WIDTH-PLATFORM_WIDTH))
+        position_y = plateforme_plus_haute - (random.random(MIN_PLATFORM_GAP, MAX_PLATFORM_GAP))
+        platform_type = choose_platform_type(0.55, 0.20, 13.0)
+        create_platform(position_x, position_y, platform_type)
+
 
     return
 
@@ -191,3 +242,5 @@ def rects_collide(r1, r2):
         r1[0] + r1[2] <= r2[0] or r1[0] >= r2[0] + r2[2] or
         r1[1] + r1[3] <= r2[1] or r1[1] >= r2[1] + r2[3]
     )
+
+generate_initial_platforms
